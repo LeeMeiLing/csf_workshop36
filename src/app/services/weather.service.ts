@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { City } from '../model/city';
 import { lastValueFrom } from 'rxjs';
+import { environment } from 'src/environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
@@ -19,13 +20,12 @@ export class WeatherService {
   ]
 
   imageUrlCities = [
-    { country: 'Singapore', imageUrl: ''},
-    { city: 'London', imageUrl: ''},
-    { city: 'Kuala Lumpur', imageUrl: ''},
-    { city: 'Jakarta', imageUrl: ''},
-    { city: 'Beijing', imageUrl: ''},
-    { city: 'New Delhi', imageUrl: ''},
-    { city: 'Bangkok', imageUrl: ''}
+    { city: 'Singapore', imageUrl: 'https://bit.ly/3AOZjl0'},
+    { city: 'Kuala Lumpur', imageUrl: 'https://bit.ly/3AOZjl0'},
+    { city: 'Jakarta', imageUrl: 'https://bit.ly/3AOZjl0'},
+    { city: 'Beijing', imageUrl: 'https://bit.ly/3AOZjl0'},
+    { city: 'New Delhi', imageUrl: 'https://bit.ly/3AOZjl0'},
+    { city: 'Bangkok', imageUrl: 'https://bit.ly/3AOZjl0'}
 
   ]
 
@@ -33,10 +33,10 @@ export class WeatherService {
 
   getWeather(city:string, apiKey:string) : Promise<any>{
 
-    const params = new HttpParams().set("q", city).set("appid",apiKey)
+    const params = new HttpParams().set("q", city).set("units","metric").set("appid",apiKey)
 
     return lastValueFrom(
-      this.httpClient.get("https://api.openweather.org/data/2.5/weather", {params})
+      this.httpClient.get(environment.openWeatherApiUrl, {params})
     )
   }
 
@@ -48,8 +48,12 @@ export class WeatherService {
 
   addCity(city:City){
     this.countries.push({city:city.city, country: city.country})
-    this.countries.sort((a,b) => b.country > a.country ? 1: -1)
+    this.countries.sort((a,b) => b.city > a.city ? 1: -1)
     this.imageUrlCities.push({city:city.city, imageUrl: city.imageUrl})
+  }
+
+  sortCities(){
+    this.countries.sort((a,b) => b.city > a.city ? 1: -1)
   }
 
 }
